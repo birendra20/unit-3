@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: auto;
+        text-align: center;
+        width: 80%;
+        height: 600px;
+        background-color: grey;
+      }
+      body > div {
+        display: grid;
+        grid-template-columns: 40% 60%;
+        grid-template-rows: auto;
+        margin-top: 5%;
+        grid-gap: 5%;
+      }
+
+      #main {
+        padding: 15px;
+        padding-top: 20px;
+        background-color: grey;
+        text-align: left;
+        padding-left: 20px;
+      }
+
+      #mapdata {
+        background-color: blue;
+      }
+
+      input {
+        height: 30px;
+        border-radius: 5px;
+        font-size: 22px;
+      }
+
+      button {
+        margin-left: 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      #data {
+        font-size: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>weather data for the city</h1>
+
+    <div>
+      <div id="main">
+        <input type="text" id="city" placeholder="Search place" />
+        <button onclick="getWeather()">Search</button>
+
+        <div id="data"></div>
+      </div>
+      <div id="mapData"></div>
+    </div>
+    <div id="forcast"></div>
+  </body>
+</html>
+<script>
+  //  weather data
+  let data_div = document.getElementById("data");
+  async function getWeather() {
+    try {
+      let city = document.getElementById("city").value;
+
+      let response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=daeae424fb6614256cb563e29cf0bb69&units=metric`
+      );
+
+      let data = await response.json();
+
+      showWeather(data);
+      map(city);
+
+      console.log("data", data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+
+  //  map data
+
+  function map(city) {
+    let map = document.getElementById("mapData");
+    map.innerHTML = `<iframe
+  width="600"
+  height="450"
+  style="border:0"
+  loading="lazy"
+  allowfullscreen
+  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA587PTqZ99M5FDe92tAVLD7C5u5GEmups&q=${city}">
+</iframe>`;
+  }
+
+  function showWeather(weather) {
+    data_div.innerHTML = "";
+
+    let temp = document.createElement("p");
+    temp.innerText = `temp - ${weather.main.temp}°`;
+
+    let max_temp = document.createElement("p");
+    max_temp.innerText = `max temp - ${weather.main.temp_max}°`;
+
+    let min_temp = document.createElement("p");
+    min_temp.innerText = `min temp - ${weather.main.temp_min}°`;
+
+    let pressure = document.createElement("p");
+    pressure.innerText = `pressure - ${weather.main.pressure}`;
+
+    let humidity = document.createElement("p");
+    humidity.innerText = `humidity - ${weather.main.humidity}`;
+
+    data_div.append(temp, max_temp, min_temp, pressure, humidity);
+  }
+</script>
